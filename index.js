@@ -48,6 +48,7 @@ connectToDatabase();
 app.use(cors({
   origin: [
     'http://localhost:4000',
+    'https://car-advertisement-admin.vercel.app',
   ], credentials: true
 }));
 app.use(express.json());
