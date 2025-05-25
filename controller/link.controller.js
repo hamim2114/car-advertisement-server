@@ -15,7 +15,18 @@ export const createLink = async (req, res, next) => {
 
 export const getAllLinks = async (req, res) => {
   const links = await linkModel.find().sort({ createdAt: -1 });
-  res.json(links);
+  
+  const linksWithEmailCounts = await Promise.all(
+    links.map(async (link) => {
+      const emailCount = await emailModel.countDocuments({ link: link._id });
+      return {
+        ...link.toObject(),
+        emailCount
+      };
+    })
+  );
+
+  res.json(linksWithEmailCounts);
 };
 
 
@@ -59,6 +70,7 @@ export const getLinkBySlug = async (req, res, next) => {
       destinationUrl: link.destinationUrl,
       visits: link.visits,
       emailList,
+      createdAt: link.createdAt,
     });
   } catch (err) {
     console.error('Error:', err);
