@@ -1,5 +1,5 @@
-import linkModel from "../models/link.model.js";
-import visitModel from "../models/visit.model.js";
+import linkModel from '../models/link.model.js';
+import visitModel from '../models/visit.model.js';
 import { Parser } from 'json2csv';
 
 export const createLink = async (req, res, next) => {
@@ -14,7 +14,7 @@ export const createLink = async (req, res, next) => {
 };
 
 export const getAllLinks = async (req, res) => {
-  const links = await linkModel.find();
+  const links = await linkModel.find().sort({ createdAt: -1 });
   res.json(links);
 };
 
@@ -53,31 +53,31 @@ export const getAllLinks = async (req, res) => {
 //   }
 // };
 
-export const getLinkBySlug = async (req, res,next) => {
+export const getLinkBySlug = async (req, res, next) => {
   try {
     const { slug } = req.params;
     const { from, to, exportAs } = req.query;
 
     const link = await linkModel.findOne({ slug });
     if (!link) return res.status(404).send('Link not found');
-
+   
     // Build query filter
-    const filter = { linkId: link._id };
+    const filter = { link: link._id };
     if (from || to) {
       filter.timestamp = {};
       if (from) filter.timestamp.$gte = new Date(from);
       if (to) filter.timestamp.$lte = new Date(to);
     }
 
-    const visits = await visitModel.find(filter).sort({ timestamp: -1 });
+    const visits = await visitModel.find(filter).sort({ visitedAt: -1 });
 
-    const emailList = visits.map(v => ({
+    const emailList = visits.map((v) => ({
       email: v.email,
-      timestamp: v.timestamp,
+      visitedAt: v.visitedAt,
     }));
 
     if (exportAs === 'csv') {
-      const csvFields = ['email', 'timestamp'];
+      const csvFields = ['email', 'visitedAt'];
       const parser = new Parser({ fields: csvFields });
       const csv = parser.parse(emailList);
 
@@ -86,7 +86,7 @@ export const getLinkBySlug = async (req, res,next) => {
       return res.send(csv);
     }
 
-    const uniqueEmails = [...new Set(visits.map(v => v.email))];
+    const uniqueEmails = [...new Set(visits.map((v) => v.email))];
 
     return res.json({
       _id: link._id,
@@ -102,7 +102,7 @@ export const getLinkBySlug = async (req, res,next) => {
   }
 };
 
-export const updateLink = async (req, res,next) => {
+export const updateLink = async (req, res, next) => {
   const { id } = req.params;
   try {
     const link = await linkModel.findByIdAndUpdate(id, req.body, { new: true });
@@ -113,13 +113,13 @@ export const updateLink = async (req, res,next) => {
   }
 };
 
-export const deleteLink = async (req, res,next) => {
+export const deleteLink = async (req, res, next) => {
   const { id } = req.params;
   try {
-    const link = await linkModel.findByIdAndDelete( id );
+    const link = await linkModel.findByIdAndDelete(id);
     if (!link) return res.status(404).send('Link not found');
     res.send('Link deleted successfully');
   } catch (err) {
     next(err);
   }
-};  
+};
