@@ -11,10 +11,10 @@ export const recordEmail = async (req, res) => {
   link.visits++;
   await link.save();
 
-  const existingEmail = await emailModel.findOne({ email });
-  if (existingEmail) {
-    return res.status(200).send('Email already recorded');
-  }
+  // const existingEmail = await emailModel.findOne({ email });
+  // if (existingEmail) {
+  //   return res.status(200).send('Email already recorded');
+  // }
 
   const emailRecord = new emailModel({
     link: link._id,
