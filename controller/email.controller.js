@@ -4,15 +4,22 @@ import emailModel from '../models/email.model.js';
 export const recordEmail = async (req, res) => {
   const { slug } = req.params;
   const { email } = req.body;
+
   const link = await linkModel.findOne({ slug });
   if (!link) return res.status(404).send('Invalid slug');
 
-  const existingEmail = await emailModel.findOne({ link: link._id, email });
-  if (!existingEmail) {
+  link.visits++;
+  await link.save();
+
+  const existingEmail = await emailModel.findOne({ email });
+  if (existingEmail) {
     return res.status(400).send('Email already exists');
   }
 
-  const emailRecord = new emailModel({ link: link._id });
+  const emailRecord = new emailModel({
+    link: link._id,
+    email: email,
+  });
 
   await emailRecord.save();
   res.status(201).send('Email recorded');

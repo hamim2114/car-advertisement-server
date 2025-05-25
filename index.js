@@ -10,6 +10,7 @@ import { userRoute } from './route/user.route.js';
 import cookieParser from 'cookie-parser';
 import linkRoute from './route/link.routes.js';
 import emailRoute from './route/email.routes.js';
+import dashboardRoute from './route/dashboard.routes.js';
 
 
 const app = express();
@@ -64,6 +65,7 @@ const upload = multer({ storage });
 app.use('/api/auth', userRoute);
 app.use('/api/links', linkRoute);
 app.use('/api/emails', emailRoute);
+app.use('/api/dashboard', dashboardRoute);
 app.post('/api/file/upload', upload.single('my_file'), handleUpload);
 app.post('/api/file/delete', handleDelete);
 

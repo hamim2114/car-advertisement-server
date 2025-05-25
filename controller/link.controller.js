@@ -1,5 +1,5 @@
 import linkModel from '../models/link.model.js';
-import visitModel from '../models/email.model.js';
+import emailModel from '../models/email.model.js';
 import { Parser } from 'json2csv';
 
 export const createLink = async (req, res, next) => {
@@ -18,40 +18,6 @@ export const getAllLinks = async (req, res) => {
   res.json(links);
 };
 
-// export const getLinkBySlug = async (req, res) => {
-//   const { slug } = req.params;
-//   const link = await linkModel.findOne({ slug });
-//   if (!link) return res.status(404).send('Link not found');
-//   res.json(link);
-// };
-
-// export const getLinkBySlug = async (req, res,next) => {
-//   try {
-//     const { slug } = req.params;
-
-//     const link = await linkModel.findOne({ slug });
-//     if (!link) return res.status(404).send('Link not found');
-
-//     const visits = await visitModel.find({ linkId: link._id }).sort({ timestamp: -1 });
-
-//     const emailList = visits.map((v) => ({
-//       email: v.email,
-//       timestamp: v.timestamp,
-//     }));
-
-//     const uniqueEmails = [...new Set(visits.map((v) => v.email))];
-
-//     res.json({
-//       slug: link.slug,
-//       destinationUrl: link.destinationUrl,
-//       totalVisits: visits.length,
-//       uniqueEmails: uniqueEmails.length,
-//       emailList,
-//     });
-//   } catch (err) {
-//     next(err);
-//   }
-// };
 
 export const getLinkBySlug = async (req, res, next) => {
   try {
@@ -69,9 +35,9 @@ export const getLinkBySlug = async (req, res, next) => {
       if (to) filter.visitedAt.$lte = new Date(to);
     }
 
-    const visits = await visitModel.find(filter).sort({ visitedAt: -1 });
+    const emails = await emailModel.find(filter).sort({ visitedAt: -1 });
 
-    const emailList = visits.map((v) => ({
+    const emailList = emails.map((v) => ({
       email: v.email,
       visitedAt: v.visitedAt,
     }));
@@ -91,7 +57,7 @@ export const getLinkBySlug = async (req, res, next) => {
       _id: link._id,
       slug: link.slug,
       destinationUrl: link.destinationUrl,
-      totalVisits: visits.length,
+      visits: link.visits,
       emailList,
     });
   } catch (err) {
