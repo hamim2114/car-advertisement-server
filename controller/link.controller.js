@@ -1,5 +1,5 @@
 import linkModel from '../models/link.model.js';
-import visitModel from '../models/visit.model.js';
+import visitModel from '../models/email.model.js';
 import { Parser } from 'json2csv';
 
 export const createLink = async (req, res, next) => {
@@ -64,9 +64,9 @@ export const getLinkBySlug = async (req, res, next) => {
     // Build query filter
     const filter = { link: link._id };
     if (from || to) {
-      filter.timestamp = {};
-      if (from) filter.timestamp.$gte = new Date(from);
-      if (to) filter.timestamp.$lte = new Date(to);
+      filter.visitedAt = {};
+      if (from) filter.visitedAt.$gte = new Date(from);
+      if (to) filter.visitedAt.$lte = new Date(to);
     }
 
     const visits = await visitModel.find(filter).sort({ visitedAt: -1 });
@@ -86,14 +86,12 @@ export const getLinkBySlug = async (req, res, next) => {
       return res.send(csv);
     }
 
-    const uniqueEmails = [...new Set(visits.map((v) => v.email))];
 
     return res.json({
       _id: link._id,
       slug: link.slug,
       destinationUrl: link.destinationUrl,
       totalVisits: visits.length,
-      uniqueEmails: uniqueEmails.length,
       emailList,
     });
   } catch (err) {

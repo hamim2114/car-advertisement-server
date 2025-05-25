@@ -9,7 +9,7 @@ import { handleDelete, handleUpload } from './utils/fileUploadHandler.js';
 import { userRoute } from './route/user.route.js';
 import cookieParser from 'cookie-parser';
 import linkRoute from './route/link.routes.js';
-import visitRoute from './route/visit.routes.js';
+import emailRoute from './route/email.routes.js';
 
 
 const app = express();
@@ -63,7 +63,7 @@ const upload = multer({ storage });
 // Routes
 app.use('/api/auth', userRoute);
 app.use('/api/links', linkRoute);
-app.use('/api/visits', visitRoute);
+app.use('/api/emails', emailRoute);
 app.post('/api/file/upload', upload.single('my_file'), handleUpload);
 app.post('/api/file/delete', handleDelete);
 
