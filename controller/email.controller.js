@@ -13,7 +13,7 @@ export const recordEmail = async (req, res) => {
 
   const existingEmail = await emailModel.findOne({ email });
   if (existingEmail) {
-    return res.status(400).send('Email already exists');
+    return res.status(200).send('Email already recorded');
   }
 
   const emailRecord = new emailModel({
