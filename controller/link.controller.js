@@ -94,6 +94,10 @@ export const deleteLink = async (req, res, next) => {
   try {
     const link = await linkModel.findByIdAndDelete(id);
     if (!link) return res.status(404).send('Link not found');
+    
+    // Delete all emails associated with this link
+    await emailModel.deleteMany({ link: id });
+    
     res.send('Link deleted successfully');
   } catch (err) {
     next(err);
