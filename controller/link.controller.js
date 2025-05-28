@@ -50,6 +50,7 @@ export const getLinkBySlug = async (req, res, next) => {
 
     const emailList = emails.map((v) => ({
       email: v.email,
+      birthDate: v.birthDate,
       visitedAt: v.visitedAt,
     }));
 
