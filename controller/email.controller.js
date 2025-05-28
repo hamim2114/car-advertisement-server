@@ -3,7 +3,7 @@ import emailModel from '../models/email.model.js';
 
 export const recordEmail = async (req, res) => {
   const { slug } = req.params;
-  const { email } = req.body;
+  const { email, birthDate } = req.body;
 
   const link = await linkModel.findOne({ slug });
   if (!link) return res.status(404).send('Invalid slug');
@@ -19,6 +19,7 @@ export const recordEmail = async (req, res) => {
   const emailRecord = new emailModel({
     link: link._id,
     email: email,
+    birthDate: birthDate,
   });
 
   await emailRecord.save();
