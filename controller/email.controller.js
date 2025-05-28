@@ -4,7 +4,7 @@ import emailModel from '../models/email.model.js';
 export const recordEmail = async (req, res) => {
   const { slug } = req.params;
   const { email, birthDate } = req.body;
-
+  console.log(email, birthDate);
   const link = await linkModel.findOne({ slug });
   if (!link) return res.status(404).send('Invalid slug');
 
