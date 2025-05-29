@@ -55,7 +55,7 @@ export const getLinkBySlug = async (req, res, next) => {
     }));
 
     if (exportAs === 'csv') {
-      const csvFields = ['email', 'visitedAt'];
+      const csvFields = ['email', 'visitedAt', 'birthDay'];
       const parser = new Parser({ fields: csvFields });
       const csv = parser.parse(emailList);
 
