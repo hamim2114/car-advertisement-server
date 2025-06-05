@@ -7,4 +7,7 @@ const emailSchema = new mongoose.Schema({
   visitedAt: { type: Date, default: Date.now },
 });
 
+// Add compound index to ensure email uniqueness per link
+emailSchema.index({ link: 1, email: 1 }, { unique: true });
+
 export default mongoose.model('Email', emailSchema);

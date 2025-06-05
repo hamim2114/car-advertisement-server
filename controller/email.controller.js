@@ -2,36 +2,53 @@ import linkModel from '../models/link.model.js';
 import emailModel from '../models/email.model.js';
 
 export const recordEmail = async (req, res) => {
-  const { slug } = req.params;
-  const { email, birthDay } = req.body;
-  
-  const link = await linkModel.findOne({ slug });
-  if (!link) return res.status(404).send('Invalid slug');
+  try {
+    const { slug } = req.params;
+    const { email, birthDay } = req.body;
+    
+    const link = await linkModel.findOne({ slug });
+    if (!link) return res.status(404).json({ error: 'Invalid slug' });
 
-  link.visits++;
-  await link.save();
+    // Check if email already exists for this link
+    const existingEmail = await emailModel.findOne({ 
+      link: link._id,
+      email: email 
+    });
 
-  // const existingEmail = await emailModel.findOne({ email });
-  // if (existingEmail) {
-  //   return res.status(200).send('Email already recorded');
-  // }
+    if (existingEmail) {
+      return res.status(200).json({
+        error: 'This email has already been registered for this link'
+      });
+    }
 
-  const emailRecord = new emailModel({
-    link: link._id,
-    email: email,
-    birthDay: birthDay,
-  });
+    // Record new email
+    const emailRecord = new emailModel({
+      link: link._id,
+      email: email,
+      birthDay: birthDay,
+    });
 
-  await emailRecord.save();
-  res.status(201).send('Email recorded');
+    await emailRecord.save();
+    return res.status(201).json({ success: true, message: 'Email recorded' });
+  } catch (error) {
+    console.error('Error in recordEmail:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
 };
 
 export const getEmailsBySlug = async (req, res) => {
-  const { slug } = req.params;
-  const link = await linkModel.findOne({ slug });
-  if (!link) return res.status(404).json({ error: 'Invalid slug' });
-  const emails = await emailModel
-    .find({ link: link._id })
-    .sort({ visitedAt: -1 });
-  res.json(emails);
+  try {
+    const { slug } = req.params;
+    const link = await linkModel.findOne({ slug });
+    if (!link) return res.status(404).json({ error: 'Invalid slug' });
+    
+    const emails = await emailModel
+      .find({ link: link._id })
+      .sort({ visitedAt: -1 });
+    
+    return res.json(emails);
+  } catch (error) {
+    console.error('Error getting emails:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
 };
