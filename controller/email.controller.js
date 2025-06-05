@@ -10,16 +10,16 @@ export const recordEmail = async (req, res) => {
     if (!link) return res.status(404).json({ error: 'Invalid slug' });
 
     // Check if email already exists for this link
-    const existingEmail = await emailModel.findOne({ 
-      link: link._id,
-      email: email 
-    });
+    // const existingEmail = await emailModel.findOne({ 
+    //   link: link._id,
+    //   email: email 
+    // });
 
-    if (existingEmail) {
-      return res.status(200).json({
-        error: 'This email has already been registered for this link'
-      });
-    }
+    // if (existingEmail) {
+    //   return res.status(200).json({
+    //     error: 'This email has already been registered for this link'
+    //   });
+    // }
 
     // Record new email
     const emailRecord = new emailModel({
@@ -29,10 +29,10 @@ export const recordEmail = async (req, res) => {
     });
 
     await emailRecord.save();
-    return res.status(201).json({ success: true, message: 'Email recorded' });
+    return res.status(201).send('Email recorded');
   } catch (error) {
     console.error('Error in recordEmail:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).send('Internal server error');
   }
 };
 

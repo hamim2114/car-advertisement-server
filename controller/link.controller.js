@@ -3,9 +3,9 @@ import emailModel from '../models/email.model.js';
 import { Parser } from 'json2csv';
 
 export const createLink = async (req, res, next) => {
-  const { slug, destinationUrl } = req.body;
+  const { slug, destinationUrl, googleLogin } = req.body;
   try {
-    const link = new linkModel({ slug, destinationUrl });
+    const link = new linkModel({ slug, destinationUrl, googleLogin });
     await link.save();
     res.status(201).send('Link created successfully');
   } catch (err) {
@@ -70,6 +70,7 @@ export const getLinkBySlug = async (req, res, next) => {
       slug: link.slug,
       destinationUrl: link.destinationUrl,
       visits: link.visits,
+      googleLogin: link.googleLogin,
       emailList,
       createdAt: link.createdAt,
     });

@@ -4,30 +4,14 @@ import visitModel from '../models/visit.model.js';
 export const recordVisit = async (req, res) => {
   try {
     const { slug } = req.params;
-    const ip = req.ip;
     
     const link = await linkModel.findOne({ slug });
     if (!link) return res.status(404).send('Invalid slug');
 
-    // Check if this IP has already visited this link
-    const existingVisit = await visitModel.findOne({
-      link: link._id,
-      ip: ip
-    });
+    link.visits = link.visits + 1;
+    await link.save();
 
-    if (!existingVisit) {
-      // Only create new visit and increment counter if IP hasn't visited before
-      const visit = new visitModel({
-        link: link._id,
-        ip: ip
-      });
-      await visit.save();
-      
-      link.visits++;
-      await link.save();
-    }
-
-    return res.status(200).json({ success: true });
+    return res.status(200).json({ recorded: true });
   } catch (error) {
     console.error('Error recording visit:', error);
     return res.status(500).send('Internal server error');
@@ -46,10 +30,10 @@ export const getVisitsBySlug = async (req, res) => {
 
     return res.json({
       totalVisits: link.visits,
-      visits: visits
+      visits: visits,
     });
   } catch (error) {
     console.error('Error getting visits:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }
-}; 
+};
