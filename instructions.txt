@@ -1,0 +1,6 @@
+we need update: company will have seperate panel, admin have main admin panel.
+
+i want to create a portal for each company. The idea is as follows:
+Our domain will be litz.it, so the admin page for company1 will be litz.it, and the advertisement link or slug will be, company1: litz.it/company1/advertisement1
+each company can create their own advertisement link or slug, admin can cretae a login crediential for each company,with email and password
+
